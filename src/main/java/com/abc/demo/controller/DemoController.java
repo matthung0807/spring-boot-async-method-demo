@@ -19,16 +19,26 @@ public class DemoController {
     @GetMapping(value = "/get")
     public BasicInfoDto getBasicInfo() throws InterruptedException, ExecutionException {
 
-        CompletableFuture<EmployeeDataDto> employeeDataDtoCompletableFuture = demoService.getEmployeeData();
-        CompletableFuture<DepartmentDataDto> departmentDataDtoCompletableFuture = demoService.getDepartmentData();
-        CompletableFuture.allOf(employeeDataDtoCompletableFuture, departmentDataDtoCompletableFuture).join();
+        CompletableFuture<EmployeeDataDto> employeeDataDtoCompletableFuture =
+                demoService.getEmployeeData();
+        CompletableFuture<DepartmentDataDto> departmentDataDtoCompletableFuture =
+                demoService.getDepartmentData();
 
-        List<EmployeeDto> employeeDtoList = employeeDataDtoCompletableFuture.get().getEmployeeDtoList();
-        List<DepartmentDto> departmentDtoList = departmentDataDtoCompletableFuture.get().getDepartmentDtoList();
+        CompletableFuture.allOf(
+                employeeDataDtoCompletableFuture,
+                departmentDataDtoCompletableFuture
+        ).join();
+
+        List<EmployeeDto> employeeDtoList =
+                employeeDataDtoCompletableFuture.get().getEmployeeDtoList();
+        List<DepartmentDto> departmentDtoList =
+                departmentDataDtoCompletableFuture.get().getDepartmentDtoList();
 
         return new BasicInfoDto(
-                employeeDtoList.stream().map(EmployeeDto::getName).collect(Collectors.toList()),
-                departmentDtoList.stream().map(DepartmentDto::getName).collect(Collectors.toList()));
+                employeeDtoList.stream().map(EmployeeDto::getName)
+                        .collect(Collectors.toList()),
+                departmentDtoList.stream().map(DepartmentDto::getName)
+                        .collect(Collectors.toList()));
 
     }
 
